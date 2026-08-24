@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
-// const postRoutes = require("./routes/post.routes");
+const leaveRoutes = require("./routes/leave");
 const userRoutes = require("./routes/user");
 
 dotenv.config();
@@ -12,7 +12,7 @@ const port = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
-// app.use("/api/posts", postRoutes);
+app.use("/api/leaves", leaveRoutes);
 app.use("/api/users", userRoutes);
 
 const start = async () => {

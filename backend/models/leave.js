@@ -8,12 +8,6 @@ const leaveRequestSchema = new mongoose.Schema(
       required: true,
     },
 
-    manager: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-
     leaveType: {
       type: String,
       enum: ["annual", "sick", "casual"],
