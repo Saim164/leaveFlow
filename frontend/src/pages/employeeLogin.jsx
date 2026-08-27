@@ -6,7 +6,7 @@ function EmployeeLogin() {
     <>
       {" "}
       <Navbar />
-      <Login />
+      <Login role="employee" />
     </>
   );
 }

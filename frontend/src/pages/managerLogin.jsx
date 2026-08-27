@@ -5,7 +5,7 @@ function ManagerLogin() {
   return (
     <>
       <Navbar />
-      <Login />
+      <Login role="manager" />
     </>
   );
 }
