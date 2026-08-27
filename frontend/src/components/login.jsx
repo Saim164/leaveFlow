@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
+import { useAuth } from "../context/AuthContext";
 
 function Login({ role }) {
-  
+  const navigate = useNavigate();
+  const { login } = useAuth();
   const [isRegistering, setIsRegistering] = useState(false);
 
   const [name, setName] = useState("");
@@ -13,6 +15,22 @@ function Login({ role }) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    try {
+      const { data } = await api.post("/users/login", { email, password });
+      login(data.user, data.token);
+      navigate(
+        role === "manager" ? "/manager/dashboard" : "/employee/dashboard",
+      );
+    } catch (err) {
+      setError(err.response?.data?.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -34,7 +52,7 @@ function Login({ role }) {
     return (
       <>
         <h2>Login</h2>
-        <form >
+        <form onSubmit={handleLogin}>
           <input
             type="email"
             placeholder="Enter your email"
