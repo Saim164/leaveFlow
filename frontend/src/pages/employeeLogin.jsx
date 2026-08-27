@@ -1,5 +1,14 @@
+import Login from "../components/login";
+import Navbar from "../components/navbar";
+
 function EmployeeLogin() {
-  return <div>employee Login</div>;
+  return (
+    <>
+      {" "}
+      <Navbar />
+      <Login />
+    </>
+  );
 }
 
 export default EmployeeLogin;

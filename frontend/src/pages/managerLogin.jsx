@@ -1,5 +1,13 @@
+import Login from "../components/login";
+import Navbar from "../components/navbar";
+
 function ManagerLogin() {
-  return <div>ManagerLogin</div>;
+  return (
+    <>
+      <Navbar />
+      <Login />
+    </>
+  );
 }
 
 export default ManagerLogin;
