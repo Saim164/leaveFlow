@@ -2,12 +2,15 @@ import { useState, useEffect } from "react";
 import Navbar from "../components/navbar";
 import { useAuth } from "../context/AuthContext";
 import api from "../api/axios";
+import { useNavigate } from "react-router-dom";
 
 function ManagerDashboard() {
   const { user } = useAuth();
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const navigate = useNavigate();
 
   const fetchRequests = async () => {
     setLoading(true);
@@ -36,8 +39,16 @@ function ManagerDashboard() {
       <Navbar />
       <div>
         <h1>
-          Welcome {user.name.toUpperCase()} , you can see you drequests and apply for other if desired
+          Welcome {user.name.toUpperCase()} , you can see you drequests and
+          apply for other if desired
         </h1>
+        <button
+          onClick={() => {
+            navigate("/employee/request-leave");
+          }}
+        >
+          Request a leave
+        </button>
         <div>
           <h2>{pendingCount}</h2>
           <p>pending requests</p>
