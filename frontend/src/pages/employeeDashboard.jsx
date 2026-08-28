@@ -34,6 +34,16 @@ function ManagerDashboard() {
     (req) => req.status === "pending",
   ).length;
 
+  const handleCancel = async (id) => {
+    setError("");
+    try {
+      await api.patch(`/leaves/${id}/cancel`);
+      fetchRequests();
+    } catch (err) {
+      setError(err.response?.data?.message || "Something went wrong");
+    }
+  };
+
   return (
     <>
       <Navbar />
