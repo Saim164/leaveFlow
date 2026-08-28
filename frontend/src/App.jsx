@@ -7,6 +7,7 @@ import ManagerDashboard from "./pages/managerDashboard";
 import EmployeeDashboard from "./pages/employeeDashboard";
 import RequestLeave from "./pages/requestLeave";
 import ProtectedRoute from "./components/ProtectedRoute";
+import GuestRoute from "./components/GuestRoute";
 
 const NotFound = () => <h2>404 - Page Not Found</h2>;
 
@@ -15,8 +16,22 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/manager/login" element={<ManagerLogin />} />
-        <Route path="/employee/login" element={<EmployeeLogin />} />
+        <Route
+          path="/manager/login"
+          element={
+            <GuestRoute>
+              <ManagerLogin />
+            </GuestRoute>
+          }
+        />
+        <Route
+          path="/employee/login"
+          element={
+            <GuestRoute>
+              <EmployeeLogin />
+            </GuestRoute>
+          }
+        />
         <Route
           path="/manager/dashboard"
           element={

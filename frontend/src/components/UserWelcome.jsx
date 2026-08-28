@@ -1,13 +1,10 @@
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 function UserWelcome() {
   const { user, logout } = useAuth();
-  const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
-    navigate("/");
   };
 
   if (!user) return null;
