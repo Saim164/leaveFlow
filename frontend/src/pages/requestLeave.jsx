@@ -16,6 +16,8 @@ function RequestLeave() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const today = new Date().toLocaleDateString("en-CA");
+
   useEffect(() => {
     refreshUser();
   }, [refreshUser]);
@@ -23,6 +25,11 @@ function RequestLeave() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
+    if (startDate < today) {
+      setError("Start date cannot be in the past");
+      return;
+    }
 
     if (new Date(endDate) < new Date(startDate)) {
       setError("End date cannot be before start date");
@@ -66,12 +73,14 @@ function RequestLeave() {
         <input
           type="date"
           value={startDate}
+          min={today}
           onChange={(e) => setStartDate(e.target.value)}
           required
         />
         <input
           type="date"
           value={endDate}
+          min={startDate || today}
           onChange={(e) => setEndDate(e.target.value)}
           required
         />

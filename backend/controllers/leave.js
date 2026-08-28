@@ -17,6 +17,13 @@ const requestLeave = async (req, res) => {
             return res.status(400).json({ message: "Invalid startDate or endDate" });
         }
 
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        if (start < today) {
+            return res.status(400).json({ message: "startDate cannot be in the past" });
+        }
+
         if (end < start) {
             return res.status(400).json({ message: "endDate cannot be before startDate" });
         }
