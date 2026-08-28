@@ -1,8 +1,12 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/navbar";
 import { useAuth } from "../context/AuthContext";
 import api from "../api/axios";
-import { useNavigate } from "react-router-dom";
+import { formatDate } from "../utils/formatDate";
+import "./Dashboard.css";
+
+const FILTERS = ["pending", "approved", "rejected"];
 
 function EmployeeDashboard() {
   const { user, refreshUser } = useAuth();
@@ -10,6 +14,7 @@ function EmployeeDashboard() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [actionId, setActionId] = useState(null);
+  const [filter, setFilter] = useState("pending");
 
   const navigate = useNavigate();
 
@@ -32,9 +37,8 @@ function EmployeeDashboard() {
     refreshUser();
   }, [refreshUser]);
 
-  const pendingCount = requests.filter(
-    (req) => req.status === "pending",
-  ).length;
+  const pendingCount = requests.filter((req) => req.status === "pending").length;
+  const visibleRequests = requests.filter((req) => req.status === filter);
 
   const handleCancel = async (id) => {
     setError("");
@@ -53,45 +57,92 @@ function EmployeeDashboard() {
   return (
     <>
       <Navbar />
-      <div>
-        <h1>Welcome {user.name.toUpperCase()}</h1>
-        <p>Leave balance: {user.leaveBalance} day(s)</p>
-        <button
-          onClick={() => {
-            navigate("/employee/request-leave");
-          }}
-        >
-          Request a leave
-        </button>
-        <div>
-          <h2>{pendingCount}</h2>
-          <p>pending requests</p>
-          {loading && <p>Loading...</p>}
-          {error && <p>{error}</p>}
+      <main className="dashboard">
+        <div className="dashboard__header">
+          <div>
+            <h1 className="dashboard__title">Welcome, {user.name}</h1>
+            <p className="dashboard__subtitle">
+              Request time off and track your leave.
+            </p>
+          </div>
+          <div className="dashboard__actions">
+            <button
+              className="btn-primary"
+              onClick={() => {
+                navigate("/employee/request-leave");
+              }}
+            >
+              Request a leave
+            </button>
+          </div>
         </div>
 
-        {!loading && requests.length === 0 && <p>No requests yet</p>}
+        <div className="dashboard__stats">
+          <div className="stat">
+            <div className="stat__value">{user.leaveBalance}</div>
+            <div className="stat__label">Leave balance (days)</div>
+          </div>
+          <div className="stat">
+            <div className="stat__value">{pendingCount}</div>
+            <div className="stat__label">Pending requests</div>
+          </div>
+        </div>
 
-        <ul>
-          {requests.map((req) => (
-            <li key={req._id}>
-              {req.leaveType} — {req.days} day{req.days > 1 ? "s" : ""} —{" "}
-              {req.status}
-              {req.status === "rejected" && req.reviewReason && (
-                <span> — reason: {req.reviewReason}</span>
-              )}
-              {req.status === "pending" && (
-                <button
-                  onClick={() => handleCancel(req._id)}
-                  disabled={actionId === req._id}
-                >
-                  Cancel request
-                </button>
-              )}
-            </li>
+        {error && <p className="alert-error">{error}</p>}
+
+        <div className="filters">
+          {FILTERS.map((f) => (
+            <button
+              key={f}
+              className={`filter${filter === f ? " filter--active" : ""}`}
+              onClick={() => setFilter(f)}
+            >
+              {f.charAt(0).toUpperCase() + f.slice(1)}
+            </button>
           ))}
-        </ul>
-      </div>
+        </div>
+
+        {loading && <p className="empty">Loading...</p>}
+
+        {!loading && visibleRequests.length === 0 && (
+          <p className="empty">No records</p>
+        )}
+
+        {!loading && visibleRequests.length > 0 && (
+          <div className="requests">
+            {visibleRequests.map((req) => (
+              <div className="request" key={req._id}>
+                <div className="request__main">
+                  <span className="request__type">{req.leaveType} leave</span>
+                  <span className="request__dates">
+                    {formatDate(req.startDate)} &rarr; {formatDate(req.endDate)}{" "}
+                    &middot; {req.days} day{req.days > 1 ? "s" : ""}
+                  </span>
+                  {req.status === "rejected" && req.reviewReason && (
+                    <span className="request__reason">
+                      Reason: {req.reviewReason}
+                    </span>
+                  )}
+                </div>
+                <div className="request__side">
+                  <span className={`badge badge--${req.status}`}>
+                    {req.status}
+                  </span>
+                  {req.status === "pending" && (
+                    <button
+                      className="btn-outline btn-danger"
+                      onClick={() => handleCancel(req._id)}
+                      disabled={actionId === req._id}
+                    >
+                      Cancel
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </main>
     </>
   );
 }
