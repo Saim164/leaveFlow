@@ -30,7 +30,7 @@ I built this to practice putting a full stack together end to end: authenticatio
 
 ## Live demo
 
-_Add your deployment links here._
+https://leave-flow-orpin.vercel.app/
 
 Since registration is open (see the note further down), you can create both an employee and a manager account and walk through the whole flow yourself.
 
