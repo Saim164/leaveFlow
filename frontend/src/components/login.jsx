@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
+import "./Login.css";
 
 function Login({ role }) {
   const navigate = useNavigate();
@@ -15,6 +16,8 @@ function Login({ role }) {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const roleLabel = role === "manager" ? "Manager" : "Employee";
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -54,90 +57,82 @@ function Login({ role }) {
     }
   };
 
-  if (!isRegistering) {
-    return (
-      <>
-        <h2>Login</h2>
-        {message && <p>{message}</p>}
-        <form onSubmit={handleLogin}>
+  const switchMode = (registering) => {
+    setIsRegistering(registering);
+    setError("");
+    setMessage("");
+  };
+
+  return (
+    <main className="auth">
+      <div className="auth__card">
+        <h1 className="auth__title">
+          {roleLabel} {isRegistering ? "sign up" : "login"}
+        </h1>
+        <p className="auth__subtitle">
+          {isRegistering
+            ? `Create a ${roleLabel.toLowerCase()} account to get started.`
+            : `Sign in to your ${roleLabel.toLowerCase()} account.`}
+        </p>
+
+        {message && <p className="auth__message">{message}</p>}
+        {error && <p className="auth__error">{error}</p>}
+
+        <form
+          className="auth__form"
+          onSubmit={isRegistering ? handleRegister : handleLogin}
+        >
+          {isRegistering && (
+            <input
+              className="auth__input"
+              type="text"
+              placeholder="Full name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          )}
           <input
+            className="auth__input"
             type="email"
-            placeholder="Enter your email"
+            placeholder="Email address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
           <input
+            className="auth__input"
             type="password"
-            placeholder="Enter your password"
+            placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          {error && <p>{error}</p>}
-          <button type="submit" disabled={loading}>
-            {loading ? "Logging in..." : "submit"}
+          <button className="auth__submit" type="submit" disabled={loading}>
+            {isRegistering
+              ? loading
+                ? "Creating account..."
+                : "Create account"
+              : loading
+                ? "Signing in..."
+                : "Sign in"}
           </button>
         </form>
-        <p>
-          Dont have an accout?{" "}
+
+        <p className="auth__toggle">
+          {isRegistering
+            ? "Already have an account? "
+            : "Don't have an account? "}
           <button
-            onClick={() => {
-              setIsRegistering(true);
-              setError("");
-              setMessage("");
-            }}
+            type="button"
+            className="auth__link"
+            onClick={() => switchMode(!isRegistering)}
           >
-            Sign up
+            {isRegistering ? "Log in" : "Sign up"}
           </button>
         </p>
-      </>
-    );
-  }
-  return (
-    <>
-      <h2>Register</h2>{" "}
-      <form onSubmit={handleRegister}>
-        <input
-          type="text"
-          placeholder="Enter your name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
-
-        <input
-          type="email"
-          placeholder="Enter your email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Enter your password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        {error && <p>{error}</p>}
-        <button type="submit" disabled={loading}>
-          {loading ? "Registering..." : "submit"}
-        </button>
-      </form>
-      <p>
-        Already have an account?{" "}
-        <button
-          onClick={() => {
-            setIsRegistering(false);
-            setError("");
-            setMessage("");
-          }}
-        >
-          Login
-        </button>
-      </p>{" "}
-    </>
+      </div>
+    </main>
   );
 }
 
