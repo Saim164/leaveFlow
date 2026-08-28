@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/navbar";
 import { useAuth } from "../context/AuthContext";
 import api from "../api/axios";
+import { apiError } from "../utils/apiError";
 import "./RequestLeave.css";
 
 function RequestLeave() {
@@ -47,7 +48,7 @@ function RequestLeave() {
       });
       navigate("/employee/dashboard");
     } catch (err) {
-      setError(err.response?.data?.message || "Something went wrong");
+      setError(apiError(err));
     } finally {
       setLoading(false);
     }

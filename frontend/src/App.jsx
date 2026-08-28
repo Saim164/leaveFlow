@@ -1,4 +1,3 @@
-import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LandingPage from "./pages/landingPage";
 import ManagerLogin from "./pages/managerLogin";
@@ -6,10 +5,9 @@ import EmployeeLogin from "./pages/employeeLogin";
 import ManagerDashboard from "./pages/managerDashboard";
 import EmployeeDashboard from "./pages/employeeDashboard";
 import RequestLeave from "./pages/requestLeave";
+import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import GuestRoute from "./components/GuestRoute";
-
-const NotFound = () => <h2>404 - Page Not Found</h2>;
 
 function App() {
   return (
@@ -56,7 +54,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

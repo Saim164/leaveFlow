@@ -2,22 +2,24 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
+import { apiError } from "../utils/apiError";
 import "./Login.css";
 
 function Login({ role }) {
   const navigate = useNavigate();
   const { login } = useAuth();
-  const [isRegistering, setIsRegistering] = useState(false);
 
+  const [isRegistering, setIsRegistering] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   const roleLabel = role === "manager" ? "Manager" : "Employee";
+  const actionLabel = isRegistering ? "Create account" : "Sign in";
+  const loadingLabel = isRegistering ? "Creating account..." : "Signing in...";
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -33,7 +35,7 @@ function Login({ role }) {
           : "/employee/dashboard",
       );
     } catch (err) {
-      setError(err.response?.data?.message || "Something went wrong");
+      setError(apiError(err));
     } finally {
       setLoading(false);
     }
@@ -51,7 +53,7 @@ function Login({ role }) {
       setPassword("");
       setMessage("Account created successfully. You can now log in.");
     } catch (err) {
-      setError(err.response?.data?.message || "Something went wrong");
+      setError(apiError(err));
     } finally {
       setLoading(false);
     }
@@ -109,13 +111,7 @@ function Login({ role }) {
             required
           />
           <button className="auth__submit" type="submit" disabled={loading}>
-            {isRegistering
-              ? loading
-                ? "Creating account..."
-                : "Create account"
-              : loading
-                ? "Signing in..."
-                : "Sign in"}
+            {loading ? loadingLabel : actionLabel}
           </button>
         </form>
 

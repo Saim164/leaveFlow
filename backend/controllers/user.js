@@ -2,6 +2,14 @@ const bcrypt = require("bcrypt");
 const User = require("../models/user.js");
 const jwt = require("jsonwebtoken");
 
+const publicUser = (user) => ({
+  id: user._id,
+  name: user.name,
+  email: user.email,
+  role: user.role,
+  leaveBalance: user.leaveBalance,
+});
+
 const register = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
@@ -31,7 +39,6 @@ const register = async (req, res) => {
   }
 };
 
-
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -52,36 +59,14 @@ const login = async (req, res) => {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
-    return res.status(200).json({
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        leaveBalance: user.leaveBalance,
-      },
-    });
+    return res.status(200).json({ token, user: publicUser(user) });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
 const me = async (req, res) => {
-  try {
-    const user = req.user;
-    return res.status(200).json({
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        leaveBalance: user.leaveBalance,
-      },
-    });
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
+  return res.status(200).json({ user: publicUser(req.user) });
 };
 
 module.exports = {

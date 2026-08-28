@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/navbar";
 import { useAuth } from "../context/AuthContext";
 import api from "../api/axios";
+import { apiError } from "../utils/apiError";
 import { formatDate } from "../utils/formatDate";
 import "./Dashboard.css";
 
@@ -10,45 +11,37 @@ const FILTERS = ["pending", "approved", "rejected"];
 
 function EmployeeDashboard() {
   const { user, refreshUser } = useAuth();
+  const navigate = useNavigate();
+
   const [requests, setRequests] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [actionId, setActionId] = useState(null);
   const [filter, setFilter] = useState("pending");
 
-  const navigate = useNavigate();
-
-  const fetchRequests = async () => {
-    setLoading(true);
-    setError("");
-    try {
-      const res = await api.get("/leaves/my");
-      setRequests(res.data.requests);
-    } catch (err) {
-      setError(err.response?.data?.message || "Something went wrong");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const loadRequests = useCallback(
+    () => api.get("/leaves/my").then((res) => setRequests(res.data.requests)),
+    [],
+  );
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- fetch-on-mount with a loading flag
-    fetchRequests();
+    loadRequests()
+      .catch((err) => setError(apiError(err)))
+      .finally(() => setLoading(false));
     refreshUser();
-  }, [refreshUser]);
+  }, [loadRequests, refreshUser]);
 
   const pendingCount = requests.filter((req) => req.status === "pending").length;
   const visibleRequests = requests.filter((req) => req.status === filter);
 
   const handleCancel = async (id) => {
-    setError("");
     setActionId(id);
     try {
       await api.patch(`/leaves/${id}/cancel`);
-      await fetchRequests();
+      await loadRequests();
       await refreshUser();
     } catch (err) {
-      setError(err.response?.data?.message || "Something went wrong");
+      setError(apiError(err));
     } finally {
       setActionId(null);
     }
@@ -68,9 +61,7 @@ function EmployeeDashboard() {
           <div className="dashboard__actions">
             <button
               className="btn-primary"
-              onClick={() => {
-                navigate("/employee/request-leave");
-              }}
+              onClick={() => navigate("/employee/request-leave")}
             >
               Request a leave
             </button>

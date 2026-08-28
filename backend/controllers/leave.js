@@ -41,7 +41,7 @@ const requestLeave = async (req, res) => {
         }
 
         const newRequest = new Leave({
-            employee: user,
+            employee: user._id,
             leaveType,
             startDate,
             endDate,
@@ -60,10 +60,9 @@ const requestLeave = async (req, res) => {
 const getUserRequests = async (req, res) => {
     try {
         const user = req.user;
-        const requests = await Leave.find({ employee: user._id }).populate(
-            "employee",
-            "name email"
-        );
+        const requests = await Leave.find({ employee: user._id })
+            .populate("employee", "name email")
+            .sort({ createdAt: -1 });
 
         return res.status(200).json({ requests });
     } catch (err) {

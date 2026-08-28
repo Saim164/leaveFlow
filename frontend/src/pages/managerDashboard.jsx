@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Navbar from "../components/navbar";
 import { useAuth } from "../context/AuthContext";
 import api from "../api/axios";
+import { apiError } from "../utils/apiError";
 import { formatDate } from "../utils/formatDate";
 import "./Dashboard.css";
 
@@ -9,44 +10,37 @@ const FILTERS = ["pending", "approved", "rejected"];
 
 function ManagerDashboard() {
   const { user } = useAuth();
+
   const [requests, setRequests] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [actionId, setActionId] = useState(null);
   const [filter, setFilter] = useState("pending");
   const [rejectingId, setRejectingId] = useState(null);
   const [reviewReason, setReviewReason] = useState("");
 
-  const fetchRequests = async () => {
-    setLoading(true);
-    setError("");
-    try {
-      const res = await api.get("/leaves/all");
-      setRequests(res.data.requests);
-    } catch (err) {
-      setError(err.response?.data?.message || "Something went wrong");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const loadRequests = useCallback(
+    () => api.get("/leaves/all").then((res) => setRequests(res.data.requests)),
+    [],
+  );
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- fetch-on-mount with a loading flag
-    fetchRequests();
-  }, []);
+    loadRequests()
+      .catch((err) => setError(apiError(err)))
+      .finally(() => setLoading(false));
+  }, [loadRequests]);
 
   const pendingCount = requests.filter((req) => req.status === "pending").length;
   const visibleRequests = requests.filter((req) => req.status === filter);
   const rejectingRequest = requests.find((req) => req._id === rejectingId);
 
   const handleApprove = async (id) => {
-    setError("");
     setActionId(id);
     try {
       await api.patch(`/leaves/${id}/approve`);
-      await fetchRequests();
+      await loadRequests();
     } catch (err) {
-      setError(err.response?.data?.message || "Something went wrong");
+      setError(apiError(err));
     } finally {
       setActionId(null);
     }
@@ -65,14 +59,13 @@ function ManagerDashboard() {
 
   const handleReject = async (e) => {
     e.preventDefault();
-    setError("");
     setActionId(rejectingId);
     try {
       await api.patch(`/leaves/${rejectingId}/reject`, { reviewReason });
       closeReject();
-      await fetchRequests();
+      await loadRequests();
     } catch (err) {
-      setError(err.response?.data?.message || "Something went wrong");
+      setError(apiError(err));
     } finally {
       setActionId(null);
     }
