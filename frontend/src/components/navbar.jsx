@@ -1,21 +1,23 @@
 import { useNavigate } from "react-router-dom";
 import UserWelcome from "./UserWelcome";
+import "./Navbar.css";
 
 function Navbar() {
   const navigate = useNavigate();
 
   return (
-    <div>
+    <header className="navbar">
       <button
         type="button"
+        className="navbar__logo"
         onClick={() => {
           navigate("/");
         }}
       >
-        LeaveFlow
+        Leave<span>Flow</span>
       </button>
       <UserWelcome />
-    </div>
+    </header>
   );
 }
 

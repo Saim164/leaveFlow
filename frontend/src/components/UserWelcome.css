@@ -1,0 +1,44 @@
+.user-welcome {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.user-welcome__greeting {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.user-welcome__name {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.user-welcome__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--color-accent);
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.user-welcome__logout {
+  padding: 0.45rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-text);
+  background-color: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  transition: background-color 0.15s ease;
+}
+
+.user-welcome__logout:hover {
+  background-color: var(--color-hover);
+}
