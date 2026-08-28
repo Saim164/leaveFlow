@@ -6,13 +6,14 @@ function Navbar() {
 
   return (
     <div>
-      <h2
+      <button
+        type="button"
         onClick={() => {
           navigate("/");
         }}
       >
         LeaveFlow
-      </h2>
+      </button>
       <UserWelcome />
     </div>
   );

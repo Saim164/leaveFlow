@@ -8,6 +8,7 @@ function ManagerDashboard() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [actionId, setActionId] = useState(null);
   const [rejectingId, setRejectingId] = useState(null);
   const [reviewReason, setReviewReason] = useState("");
 
@@ -24,8 +25,6 @@ function ManagerDashboard() {
     }
   };
 
-  
-
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- fetch-on-mount with a loading flag
     fetchRequests();
@@ -35,13 +34,18 @@ function ManagerDashboard() {
     (req) => req.status === "pending",
   ).length;
 
+  const rejectingRequest = requests.find((req) => req._id === rejectingId);
+
   const handleApprove = async (id) => {
     setError("");
+    setActionId(id);
     try {
       await api.patch(`/leaves/${id}/approve`);
-      fetchRequests();
+      await fetchRequests();
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong");
+    } finally {
+      setActionId(null);
     }
   };
 
@@ -59,12 +63,15 @@ function ManagerDashboard() {
   const handleReject = async (e) => {
     e.preventDefault();
     setError("");
+    setActionId(rejectingId);
     try {
       await api.patch(`/leaves/${rejectingId}/reject`, { reviewReason });
       closeReject();
-      fetchRequests();
+      await fetchRequests();
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong");
+    } finally {
+      setActionId(null);
     }
   };
 
@@ -73,7 +80,8 @@ function ManagerDashboard() {
       <Navbar />
       <div>
         <h1>
-          Welcome {user.name.toUpperCase()} , plz handle the following requests
+          Welcome {user.name.toUpperCase()} , please handle the following
+          requests
         </h1>
         <div>
           <h2>{pendingCount}</h2>
@@ -84,19 +92,27 @@ function ManagerDashboard() {
 
         {rejectingId && (
           <form onSubmit={handleReject}>
-            <p>Reject request</p>
+            <p>
+              Reject {rejectingRequest?.employee?.name}'s{" "}
+              {rejectingRequest?.leaveType} leave ({rejectingRequest?.days} day
+              {rejectingRequest?.days > 1 ? "s" : ""})
+            </p>
             <textarea
               placeholder="Reason for rejection"
               value={reviewReason}
               onChange={(e) => setReviewReason(e.target.value)}
               required
             ></textarea>
-            <button type="submit">Confirm reject</button>
+            <button type="submit" disabled={actionId === rejectingId}>
+              Confirm reject
+            </button>
             <button type="button" onClick={closeReject}>
               Cancel
             </button>
           </form>
         )}
+
+        {!loading && requests.length === 0 && <p>No requests yet</p>}
 
         <ul>
           {requests.map((req) => (
@@ -105,8 +121,18 @@ function ManagerDashboard() {
               {req.days > 1 ? "s" : ""} — {req.status}
               {req.status === "pending" && (
                 <>
-                  <button onClick={() => handleApprove(req._id)}>Approve</button>
-                  <button onClick={() => openReject(req._id)}>Reject</button>
+                  <button
+                    onClick={() => handleApprove(req._id)}
+                    disabled={actionId === req._id}
+                  >
+                    Approve
+                  </button>
+                  <button
+                    onClick={() => openReject(req._id)}
+                    disabled={actionId === req._id}
+                  >
+                    Reject
+                  </button>
                 </>
               )}
             </li>

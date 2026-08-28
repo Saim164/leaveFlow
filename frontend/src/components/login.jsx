@@ -13,17 +13,21 @@ function Login({ role }) {
   const [password, setPassword] = useState("");
 
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
+    setMessage("");
     setLoading(true);
     try {
       const { data } = await api.post("/users/login", { email, password });
       login(data.user, data.token);
       navigate(
-        role === "manager" ? "/manager/dashboard" : "/employee/dashboard",
+        data.user.role === "manager"
+          ? "/manager/dashboard"
+          : "/employee/dashboard",
       );
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong");
@@ -35,12 +39,14 @@ function Login({ role }) {
   const handleRegister = async (e) => {
     e.preventDefault();
     setError("");
+    setMessage("");
     setLoading(true);
     try {
       await api.post("/users/register", { name, email, password, role });
       setIsRegistering(false);
       setName("");
       setPassword("");
+      setMessage("Account created successfully. You can now log in.");
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong");
     } finally {
@@ -52,6 +58,7 @@ function Login({ role }) {
     return (
       <>
         <h2>Login</h2>
+        {message && <p>{message}</p>}
         <form onSubmit={handleLogin}>
           <input
             type="email"
@@ -78,6 +85,7 @@ function Login({ role }) {
             onClick={() => {
               setIsRegistering(true);
               setError("");
+              setMessage("");
             }}
           >
             Sign up
@@ -123,6 +131,7 @@ function Login({ role }) {
           onClick={() => {
             setIsRegistering(false);
             setError("");
+            setMessage("");
           }}
         >
           Login

@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/navbar";
+import { useAuth } from "../context/AuthContext";
 import api from "../api/axios";
 
 function RequestLeave() {
   const navigate = useNavigate();
+  const { user, refreshUser } = useAuth();
 
   const [leaveType, setLeaveType] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -14,9 +16,19 @@ function RequestLeave() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    refreshUser();
+  }, [refreshUser]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
+    if (new Date(endDate) < new Date(startDate)) {
+      setError("End date cannot be before start date");
+      return;
+    }
+
     setLoading(true);
     try {
       await api.post("/leaves/request", {
@@ -37,6 +49,7 @@ function RequestLeave() {
     <>
       <Navbar />
       <h1>Request a Leave</h1>
+      <p>Leave balance: {user.leaveBalance} day(s)</p>
       <form onSubmit={handleSubmit}>
         <select
           value={leaveType}
