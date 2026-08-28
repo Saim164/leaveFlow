@@ -71,6 +71,11 @@ function ManagerDashboard() {
             <li key={req._id}>
               {req.employee?.name} — {req.leaveType} {req.days} day
               {req.days > 1 ? "s" : ""} — {req.status}
+              {req.status === "pending" && (
+                <button onClick={() => handleCancel(req._id)}>
+                  Cancel request
+                </button>
+              )}
             </li>
           ))}
         </ul>
