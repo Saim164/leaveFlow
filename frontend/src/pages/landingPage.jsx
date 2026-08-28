@@ -1,5 +1,6 @@
 import Navbar from "../components/navbar";
 import { useNavigate } from "react-router-dom";
+import "./LandingPage.css";
 
 function LandingPage() {
   const navigate = useNavigate();
@@ -7,30 +8,43 @@ function LandingPage() {
   return (
     <>
       <Navbar />
-      <div>
-        <div>
-          <h1>welcome to leaveFlow</h1>
-          <p>apply for your leave through a modern leave portal</p>
-        </div>
-        <div>
+      <main className="landing">
+        <header className="landing__intro">
+          <h1 className="landing__title">Welcome to LeaveFlow</h1>
+          <p className="landing__subtitle">
+            A simple portal to request time off and keep your team's leave
+            organised.
+          </p>
+        </header>
+
+        <div className="landing__choices">
           <button
+            type="button"
+            className="choice-card"
             onClick={() => {
               navigate("/employee/login");
             }}
           >
-            <h2>Employee</h2>
-            <p>Manage your leave requests</p>
+            <span className="choice-card__label">Employee</span>
+            <span className="choice-card__text">
+              Request time off and track your leave balance.
+            </span>
           </button>
+
           <button
+            type="button"
+            className="choice-card"
             onClick={() => {
               navigate("/manager/login");
             }}
           >
-            <h2>Manager</h2>
-            <p>Review and manage leave requests</p>
+            <span className="choice-card__label">Manager</span>
+            <span className="choice-card__text">
+              Review, approve, and manage your team's requests.
+            </span>
           </button>
         </div>
-      </div>
+      </main>
     </>
   );
 }

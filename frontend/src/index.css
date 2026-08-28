@@ -11,6 +11,14 @@
     Helvetica, Arial, sans-serif;
 
   --radius: 8px;
+  --content-width: 960px;
+  --page-padding-x: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  :root {
+    --page-padding-x: 2rem;
+  }
 }
 
 * {
@@ -30,9 +38,36 @@ body {
   background-color: var(--color-bg);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+img,
+picture,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+textarea,
+select,
+button {
+  font: inherit;
+  color: inherit;
 }
 
 button {
-  font-family: inherit;
   cursor: pointer;
+}
+
+.page {
+  width: 100%;
+  max-width: var(--content-width);
+  margin-inline: auto;
+  padding: 1.5rem var(--page-padding-x) 3rem;
+}
+
+.stack > * + * {
+  margin-top: 1rem;
 }
