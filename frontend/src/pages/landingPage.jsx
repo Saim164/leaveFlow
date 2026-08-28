@@ -1,9 +1,15 @@
+import { useEffect } from "react";
 import Navbar from "../components/navbar";
 import { useNavigate } from "react-router-dom";
+import api from "../api/axios";
 import "./LandingPage.css";
 
 function LandingPage() {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    api.get("/users/health").catch(() => {});
+  }, []);
 
   return (
     <>

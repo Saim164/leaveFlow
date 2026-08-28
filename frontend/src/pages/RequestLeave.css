@@ -1,0 +1,142 @@
+.request-leave {
+  display: flex;
+  justify-content: center;
+  padding: clamp(1.5rem, 6vh, 3.5rem) var(--page-padding-x) 3rem;
+}
+
+.request-leave__card {
+  width: 100%;
+  max-width: 480px;
+  padding: 1.5rem;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: calc(var(--radius) * 1.5);
+}
+
+@media (min-width: 640px) {
+  .request-leave__card {
+    padding: 2rem;
+  }
+}
+
+.request-leave__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+}
+
+.request-leave__balance {
+  margin-top: 0.35rem;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.request-leave__balance strong {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.request-leave__form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.field__label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.field__control {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.95rem;
+  background-color: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.field__control:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+textarea.field__control {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 480px) {
+  .field-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.request-leave__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.request-leave__submit {
+  flex: 1;
+  min-width: 140px;
+  padding: 0.7rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: var(--color-accent);
+  border: none;
+  border-radius: var(--radius);
+  transition: opacity 0.15s ease;
+}
+
+.request-leave__submit:hover {
+  opacity: 0.9;
+}
+
+.request-leave__submit:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.request-leave__cancel {
+  padding: 0.7rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--color-text);
+  background-color: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  transition: background-color 0.15s ease;
+}
+
+.request-leave__cancel:hover {
+  background-color: var(--color-hover);
+}
+
+.request-leave__error {
+  margin-top: 1rem;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.85rem;
+  color: #991b1b;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: var(--radius);
+}
