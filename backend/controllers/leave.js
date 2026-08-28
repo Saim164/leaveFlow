@@ -23,9 +23,13 @@ const requestLeave = async (req, res) => {
 
         const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
 
-        if (days > user.leaveBalance) {
+        const pendingLeaves = await Leave.find({ employee: user._id, status: "pending" });
+        const pendingDays = pendingLeaves.reduce((sum, leave) => sum + leave.days, 0);
+        const availableBalance = user.leaveBalance - pendingDays;
+
+        if (days > availableBalance) {
             return res.status(400).json({
-                message: `Insufficient leave balance. You have ${user.leaveBalance} day(s) remaining but requested ${days}`,
+                message: `Insufficient leave balance. You have ${availableBalance} day(s) available after pending requests but requested ${days}`,
             });
         }
 

@@ -67,7 +67,25 @@ const login = async (req, res) => {
   }
 };
 
+const me = async (req, res) => {
+  try {
+    const user = req.user;
+    return res.status(200).json({
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        leaveBalance: user.leaveBalance,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   register,
   login,
+  me,
 };
